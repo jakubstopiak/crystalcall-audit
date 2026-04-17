@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crystal Call — Google Ads Overview | Dexfinity</title>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --dex-blue: #0065F7;
+    --dex-navy: #05024E;
+    --dex-white: #ffffff;
+    --dex-light-bg: #F4F6FC;
+    --dex-blue-light: #E8F0FE;
+    --dex-blue-10: rgba(0, 101, 247, 0.1);
+    --dex-blue-20: rgba(0, 101, 247, 0.2);
+    --dex-navy-light: #0A0A6E;
+    --dex-text: #1A1A2E;
+    --dex-muted: #6B7280;
+    --dex-border: #E5E7EB;
+    --dex-teal: #16AB8B;
+    --dex-orange: #ff7f00;
+    --dex-red: #E74C3C;
+    --dex-green: #16AB8B;
+    --font-primary: 'Questrial', Arial, sans-serif;
+    --font-secondary: 'Poppins', Arial, sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 2px 8px rgba(0, 101, 247, 0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-primary); background: var(--dex-light-bg); color: var(--dex-text); }
+
+  /* NAV */
+  .topbar { background: var(--dex-navy); padding: 14px 40px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(5,2,78,0.3); }
+  .topbar-left { display: flex; align-items: center; gap: 24px; }
+  .topbar-logo { height: 28px; }
+  .topbar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
+  .topbar h1 { color: #fff; font-family: var(--font-secondary); font-size: 16px; font-weight: 600; }
+  .topbar span { color: rgba(255,255,255,0.6); font-size: 12px; display: block; margin-top: 2px; }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-family: var(--font-secondary); font-weight: 600; transition: all 0.2s; }
+  .nav-links a:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .nav-links a.active { background: var(--dex-blue); color: #fff; }
+  .nav-links a.disabled { opacity: 0.4; pointer-events: none; }
+
+  /* LAYOUT */
+  .container { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+  section { margin-bottom: 48px; scroll-margin-top: 80px; }
+  .section-title { font-family: var(--font-secondary); font-size: 22px; font-weight: 700; color: var(--dex-navy); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { font-size: 26px; }
+  .section-sub { color: var(--dex-muted); font-size: 13px; margin-bottom: 24px; }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, var(--dex-navy) 0%, var(--dex-navy-light) 100%); border-radius: var(--radius-lg); padding: 48px; margin-bottom: 40px; color: #fff; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; top: -50%; right: -20%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,101,247,0.15) 0%, transparent 70%); border-radius: 50%; }
+  .hero h2 { font-family: var(--font-secondary); font-size: 32px; font-weight: 800; margin-bottom: 8px; position: relative; z-index: 1; }
+  .hero p { color: rgba(255,255,255,0.7); font-size: 15px; position: relative; z-index: 1; }
+  .hero-badge { display: inline-block; background: var(--dex-blue); color: #fff; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-family: var(--font-secondary); font-weight: 600; margin-bottom: 16px; position: relative; z-index: 1; }
+
+  /* KPI CARDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .kpi { background: var(--dex-white); border-radius: var(--radius-md); padding: 24px; text-align: center; box-shadow: var(--shadow); border-left: 4px solid var(--dex-blue); transition: transform 0.2s; }
+  .kpi:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,101,247,0.12); }
+  .kpi.teal { border-left-color: var(--dex-teal); }
+  .kpi.orange { border-left-color: var(--dex-orange); }
+  .kpi.red { border-left-color: var(--dex-red); }
+  .kpi-value { font-family: var(--font-secondary); font-size: 30px; font-weight: 800; color: var(--dex-navy); }
+  .kpi-label { font-size: 12px; color: var(--dex-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-secondary); font-weight: 600; }
+  .kpi-sub { font-size: 11px; margin-top: 6px; padding: 2px 10px; border-radius: 10px; display: inline-block; }
+  .kpi-sub.up { background: rgba(22,171,139,0.1); color: var(--dex-teal); }
+  .kpi-sub.down { background: rgba(231,76,60,0.1); color: var(--dex-red); }
+  .kpi-sub.neutral { background: var(--dex-blue-10); color: var(--dex-blue); }
+
+  /* CHARTS */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .chart-card { background: var(--dex-white); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow); }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-card h3 { font-family: var(--font-secondary); font-size: 15px; font-weight: 600; color: var(--dex-navy); margin-bottom: 16px; }
+  .chart-wrap { position: relative; height: 300px; }
+  .chart-wrap.tall { height: 360px; }
+
+  /* TABLES */
+  .table-card { background: var(--dex-white); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow); overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--dex-navy); color: #fff; padding: 10px 14px; text-align: left; font-family: var(--font-secondary); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+  th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--dex-border); }
+  tr:hover td { background: var(--dex-light-bg); }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .fw-bold { font-weight: 700; }
+  .badge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-family: var(--font-secondary); font-weight: 600; }
+  .badge-blue { background: var(--dex-blue-10); color: var(--dex-blue); }
+  .badge-teal { background: rgba(22,171,139,0.1); color: var(--dex-teal); }
+  .badge-orange { background: rgba(255,127,0,0.1); color: var(--dex-orange); }
+  .badge-red { background: rgba(231,76,60,0.1); color: var(--dex-red); }
+
+  /* ALERT BOX */
+  .alert { background: var(--dex-white); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow); border-left: 5px solid var(--dex-orange); margin-bottom: 32px; }
+  .alert h4 { font-family: var(--font-secondary); font-size: 15px; font-weight: 700; color: var(--dex-navy); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .alert p { font-size: 13px; color: var(--dex-muted); line-height: 1.6; }
+  .alert .highlight { background: rgba(255,127,0,0.08); padding: 12px 16px; border-radius: var(--radius-sm); margin-top: 12px; font-size: 13px; }
+  .alert .highlight strong { color: var(--dex-orange); }
+
+  /* CAMPAIGN CARDS */
+  .campaign-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .campaign-card { background: var(--dex-white); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow); border-top: 4px solid var(--dex-blue); transition: all 0.2s; cursor: pointer; text-decoration: none; color: var(--dex-text); display: block; }
+  .campaign-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,101,247,0.15); }
+  .campaign-card.ro { border-top-color: var(--dex-blue); }
+  .campaign-card.sk { border-top-color: var(--dex-teal); }
+  .campaign-card.sk2 { border-top-color: var(--dex-navy); }
+  .campaign-card.rmkt { border-top-color: var(--dex-orange); }
+  .campaign-card h4 { font-family: var(--font-secondary); font-size: 16px; font-weight: 700; color: var(--dex-navy); margin-bottom: 4px; }
+  .campaign-card .tag { font-size: 11px; color: var(--dex-muted); margin-bottom: 16px; display: block; }
+  .campaign-card .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .campaign-card .metric-val { font-family: var(--font-secondary); font-size: 20px; font-weight: 800; color: var(--dex-navy); }
+  .campaign-card .metric-label { font-size: 11px; color: var(--dex-muted); text-transform: uppercase; }
+  .campaign-card .link-hint { margin-top: 16px; font-size: 12px; color: var(--dex-blue); font-family: var(--font-secondary); font-weight: 600; }
+
+  /* RECO CARDS */
+  .reco-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .reco { background: var(--dex-white); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow); border-left: 5px solid var(--dex-blue); }
+  .reco.urgent { border-left-color: var(--dex-red); }
+  .reco.good { border-left-color: var(--dex-teal); }
+  .reco.warn { border-left-color: var(--dex-orange); }
+  .reco h4 { font-family: var(--font-secondary); font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .reco p { font-size: 13px; color: var(--dex-muted); line-height: 1.5; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 32px; border-top: 1px solid var(--dex-border); margin-top: 48px; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  footer img { height: 22px; opacity: 0.5; }
+  footer span { color: var(--dex-muted); font-size: 12px; }
+
+  @media (max-width: 768px) {
+    .chart-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 12px 16px; flex-direction: column; gap: 8px; }
+    .nav-links { flex-wrap: wrap; justify-content: center; }
+    .container { padding: 20px 12px; }
+    .hero { padding: 32px 24px; }
+    .hero h2 { font-size: 24px; }
+    .campaign-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div style="display:flex;align-items:center;gap:12px">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="10" stroke="#0065F7" stroke-width="2.5" fill="none"/><circle cx="13" cy="13" r="11.5" stroke="#0065F7" stroke-width="0.5" opacity="0.4" fill="none"/><circle cx="13" cy="13" r="8" stroke="#0065F7" stroke-width="0.5" opacity="0.3" fill="none"/></svg>
+      <span style="color:#fff;font-family:var(--font-secondary);font-weight:600;font-size:16px;letter-spacing:-0.3px">Dexfinity</span>
+      <span style="color:rgba(255,255,255,0.4);font-size:10px;font-style:italic;letter-spacing:0.5px">Go Beyond</span>
+    </div>
+    <div class="topbar-divider"></div>
+    <div>
+      <h1>Crystal Call — Google Ads Report</h1>
+      <span>Obdobie: 12. jan – 11. apr 2026</span>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="active">Overview</a>
+    <a href="ro-campaign.html">RO Kampaň</a>
+    <a href="sk-campaign.html">SK Kampaň</a>
+    <a href="sk-callcentrum.html">SK Call Centrum</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Q1 2026 Report</div>
+    <h2>Crystal Call — Celkový prehľad kampaní</h2>
+    <p>4 kampane · 3 krajiny/typy · €2,871.89 celkový cost · 272 konverzií · Obdobie: 12. január – 11. apríl 2026</p>
+  </div>
+
+  <!-- OVERALL KPIs -->
+  <section id="overview">
+    <div class="section-title"><span class="icon">📊</span> Celkové metriky (všetky kampane)</div>
+    <div class="section-sub">Súhrn výkonnosti naprieč všetkými Google Ads kampaňami pre Crystal Call</div>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-value">€2,871.89</div>
+        <div class="kpi-label">Celkový cost</div>
+        <div class="kpi-sub neutral">4 aktívne kampane</div>
+      </div>
+      <div class="kpi teal">
+        <div class="kpi-value">272</div>
+        <div class="kpi-label">Konverzie (celkovo)</div>
+        <div class="kpi-sub down">136 = kontaktná stránka</div>
+      </div>
+      <div class="kpi teal">
+        <div class="kpi-value">136</div>
+        <div class="kpi-label">Reálne konverzie</div>
+        <div class="kpi-sub up">bez „kontaktná stránka"</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">2,771</div>
+        <div class="kpi-label">Kliky</div>
+        <div class="kpi-sub neutral">88,840 impr.</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">€1.04</div>
+        <div class="kpi-label">Avg. CPC</div>
+        <div class="kpi-sub neutral">priemer</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">3.12%</div>
+        <div class="kpi-label">CTR (celkovo)</div>
+        <div class="kpi-sub neutral">vrátane remarketing</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONVERSION ACTION ALERT -->
+  <div class="alert">
+    <h4>⚠️ Zmena v meraní konverzií — „Boli na stránke KONTAKT"</h4>
+    <p>Konverzná akcia <strong>„Boli na stránke KONTAKT (Google Ads)"</strong> bola zastavená. Táto akcia merala návštevy kontaktnej stránky, nie skutočné leady. Tvorila <strong>136 zo 272</strong> celkových konverzií (50%).</p>
+    <div class="highlight">
+      <strong>Dopad:</strong> Po zastavení klesne reportovaný počet konverzií o ~50%, ale <strong>kvalita dát sa výrazne zlepší</strong> — zostávajú len reálne akcie: formuláre (32), kliknutia na tel. (80), kliknutia na email (12) a hovory z reklám (12). Skutočný cost/konverzia je <strong>€21.12</strong> namiesto reportovaných €10.56.
+    </div>
+  </div>
+
+  <!-- CONVERSION ACTIONS -->
+  <section id="conv-actions">
+    <div class="section-title"><span class="icon">🔄</span> Konverzné akcie — Celkový prehľad</div>
+    <div class="section-sub">Rozdelenie 272 konverzií podľa typu akcie naprieč všetkými kampaňami</div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Všetky konverzné akcie (vrátane kontaktnej stránky)</h3>
+        <div class="chart-wrap"><canvas id="convAllPie"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Reálne konverzné akcie (bez kontaktnej stránky)</h3>
+        <div class="chart-wrap"><canvas id="convRealPie"></canvas></div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+
+    <div class="chart-card full" style="margin-bottom:20px">
+      <h3>Konverzné akcie podľa kampane</h3>
+      <div class="chart-wrap tall"><canvas id="convByCampaign"></canvas></div>
+    </div>
+
+    <div class="table-card">
+      <h3 style="font-family:var(--font-secondary);font-size:15px;font-weight:600;color:var(--dex-navy);margin-bottom:16px">Detailná tabuľka: Kampaň × Konverzná akcia</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Kampaň</th>
+            <th class="text-center">📞 Klik na tel.</th>
+            <th class="text-center">📧 Klik na email</th>
+            <th class="text-center">📝 Formulár</th>
+            <th class="text-center">📲 Hovory z reklám</th>
+            <th class="text-center" style="background:#E74C3C">🚫 Kontakt stránka</th>
+            <th class="text-right fw-bold">Spolu</th>
+            <th class="text-right fw-bold">Reálne</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-bold">SK | Search</td>
+            <td class="text-center">19</td>
+            <td class="text-center">1</td>
+            <td class="text-center fw-bold" style="color:var(--dex-teal)">18</td>
+            <td class="text-center">7</td>
+            <td class="text-center" style="color:var(--dex-red)">87</td>
+            <td class="text-right fw-bold">132</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">45</td>
+          </tr>
+          <tr>
+            <td class="fw-bold">RO | Search</td>
+            <td class="text-center fw-bold" style="color:var(--dex-blue)">58</td>
+            <td class="text-center">10</td>
+            <td class="text-center">10</td>
+            <td class="text-center">4</td>
+            <td class="text-center" style="color:var(--dex-muted)">0</td>
+            <td class="text-right fw-bold">82</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">82</td>
+          </tr>
+          <tr>
+            <td class="fw-bold">SK | Search | Call Centrum</td>
+            <td class="text-center">3</td>
+            <td class="text-center">1</td>
+            <td class="text-center">4</td>
+            <td class="text-center">1</td>
+            <td class="text-center" style="color:var(--dex-red)">44</td>
+            <td class="text-right fw-bold">53</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">9</td>
+          </tr>
+          <tr>
+            <td class="fw-bold">SK - Remarketing</td>
+            <td class="text-center">0</td>
+            <td class="text-center">0</td>
+            <td class="text-center">0</td>
+            <td class="text-center">0</td>
+            <td class="text-center" style="color:var(--dex-red)">5</td>
+            <td class="text-right fw-bold">5</td>
+            <td class="text-right fw-bold" style="color:var(--dex-red)">0</td>
+          </tr>
+          <tr style="background:var(--dex-light-bg)">
+            <td class="fw-bold">SPOLU</td>
+            <td class="text-center fw-bold">80</td>
+            <td class="text-center fw-bold">12</td>
+            <td class="text-center fw-bold">32</td>
+            <td class="text-center fw-bold">12</td>
+            <td class="text-center fw-bold" style="color:var(--dex-red)">136</td>
+            <td class="text-right fw-bold" style="font-size:15px">272</td>
+            <td class="text-right fw-bold" style="font-size:15px;color:var(--dex-teal)">136</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CAMPAIGNS COMPARISON -->
+  <section id="campaigns">
+    <div class="section-title"><span class="icon">📈</span> Porovnanie kampaní</div>
+    <div class="section-sub">Výkonnosť jednotlivých kampaní — klikni na kartu pre detailnú analýzu</div>
+
+    <div class="campaign-grid">
+      <a class="campaign-card sk" href="#">
+        <h4>SK | Search</h4>
+        <span class="tag">Slovensko · Search · Maximize Conversions</span>
+        <div class="metrics">
+          <div><div class="metric-val">€1,040.36</div><div class="metric-label">Cost</div></div>
+          <div><div class="metric-val">45</div><div class="metric-label">Reálne konv.</div></div>
+          <div><div class="metric-val">€23.12</div><div class="metric-label">Cost / reálna konv.</div></div>
+          <div><div class="metric-val">11.62%</div><div class="metric-label">CTR</div></div>
+        </div>
+        <div class="link-hint">SK analýza — čoskoro →</div>
+      </a>
+      <a class="campaign-card ro" href="ro-campaign.html">
+        <h4>RO | Search</h4>
+        <span class="tag">Rumunsko · Search · Maximize Conversions</span>
+        <div class="metrics">
+          <div><div class="metric-val">€1,266.46</div><div class="metric-label">Cost</div></div>
+          <div><div class="metric-val">82</div><div class="metric-label">Reálne konv.</div></div>
+          <div><div class="metric-val">€15.44</div><div class="metric-label">Cost / konv.</div></div>
+          <div><div class="metric-val">10.04%</div><div class="metric-label">CTR</div></div>
+        </div>
+        <div class="link-hint">Pozrieť RO analýzu →</div>
+      </a>
+      <a class="campaign-card sk2" href="#">
+        <h4>SK | Search | Call Centrum</h4>
+        <span class="tag">Slovensko · Search · Call centrum keywords</span>
+        <div class="metrics">
+          <div><div class="metric-val">€461.23</div><div class="metric-label">Cost</div></div>
+          <div><div class="metric-val">9</div><div class="metric-label">Reálne konv.</div></div>
+          <div><div class="metric-val">€51.25</div><div class="metric-label">Cost / reálna konv.</div></div>
+          <div><div class="metric-val">8.53%</div><div class="metric-label">CTR</div></div>
+        </div>
+        <div class="link-hint">SK analýza — čoskoro →</div>
+      </a>
+      <a class="campaign-card rmkt" href="#">
+        <h4>SK - Remarketing</h4>
+        <span class="tag">Slovensko · Display · Remarketing</span>
+        <div class="metrics">
+          <div><div class="metric-val">€103.85</div><div class="metric-label">Cost</div></div>
+          <div><div class="metric-val">0</div><div class="metric-label">Reálne konv.</div></div>
+          <div><div class="metric-val">—</div><div class="metric-label">Cost / konv.</div></div>
+          <div><div class="metric-val">0.52%</div><div class="metric-label">CTR</div></div>
+        </div>
+        <div class="link-hint">Detaily čoskoro →</div>
+      </a>
+    </div>
+
+    <div style="height:24px"></div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Rozdelenie budgetu podľa kampane</h3>
+        <div class="chart-wrap"><canvas id="costPie"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Reálne konverzie podľa kampane</h3>
+        <div class="chart-wrap"><canvas id="realConvPie"></canvas></div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+
+    <div class="chart-card full">
+      <h3>Porovnanie kampaní — Cost vs. Reálne konverzie vs. CTR</h3>
+      <div class="chart-wrap tall"><canvas id="campaignBar"></canvas></div>
+    </div>
+
+    <div style="height:20px"></div>
+
+    <div class="table-card">
+      <h3 style="font-family:var(--font-secondary);font-size:15px;font-weight:600;color:var(--dex-navy);margin-bottom:16px">Kompletná tabuľka kampaní</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Kampaň</th>
+            <th class="text-right">Cost</th>
+            <th class="text-right">Kliky</th>
+            <th class="text-right">Impr.</th>
+            <th class="text-right">CTR</th>
+            <th class="text-right">Avg. CPC</th>
+            <th class="text-right">Konv. (všetky)</th>
+            <th class="text-right" style="color:var(--dex-teal)">Reálne konv.</th>
+            <th class="text-right">Cost/konv.</th>
+            <th class="text-right" style="color:var(--dex-teal)">Cost/reálna</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-bold">SK | Search</td>
+            <td class="text-right">€1,040.36</td>
+            <td class="text-right">651</td>
+            <td class="text-right">5,604</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">11.62%</td>
+            <td class="text-right">€1.60</td>
+            <td class="text-right">132</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">45</td>
+            <td class="text-right">€7.88</td>
+            <td class="text-right fw-bold">€23.12</td>
+          </tr>
+          <tr>
+            <td class="fw-bold">RO | Search</td>
+            <td class="text-right">€1,266.46</td>
+            <td class="text-right">1,410</td>
+            <td class="text-right">14,048</td>
+            <td class="text-right">10.04%</td>
+            <td class="text-right">€0.90</td>
+            <td class="text-right">82</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">82</td>
+            <td class="text-right">€15.44</td>
+            <td class="text-right fw-bold">€15.44</td>
+          </tr>
+          <tr>
+            <td class="fw-bold">SK | Search | Call Centrum</td>
+            <td class="text-right">€461.23</td>
+            <td class="text-right">372</td>
+            <td class="text-right">4,361</td>
+            <td class="text-right">8.53%</td>
+            <td class="text-right">€1.24</td>
+            <td class="text-right">53</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">9</td>
+            <td class="text-right">€8.70</td>
+            <td class="text-right fw-bold" style="color:var(--dex-red)">€51.25</td>
+          </tr>
+          <tr>
+            <td class="fw-bold">SK - Remarketing</td>
+            <td class="text-right">€103.85</td>
+            <td class="text-right">338</td>
+            <td class="text-right">64,827</td>
+            <td class="text-right">0.52%</td>
+            <td class="text-right">€0.31</td>
+            <td class="text-right">5</td>
+            <td class="text-right fw-bold" style="color:var(--dex-red)">0</td>
+            <td class="text-right">€20.77</td>
+            <td class="text-right fw-bold" style="color:var(--dex-red)">—</td>
+          </tr>
+          <tr style="background:var(--dex-light-bg)">
+            <td class="fw-bold">SPOLU</td>
+            <td class="text-right fw-bold">€2,871.89</td>
+            <td class="text-right fw-bold">2,771</td>
+            <td class="text-right fw-bold">88,840</td>
+            <td class="text-right fw-bold">3.12%</td>
+            <td class="text-right fw-bold">€1.04</td>
+            <td class="text-right fw-bold">272</td>
+            <td class="text-right fw-bold" style="color:var(--dex-teal)">136</td>
+            <td class="text-right fw-bold">€10.56</td>
+            <td class="text-right fw-bold">€21.12</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+
+</div>
+
+<footer style="flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <svg width="20" height="20" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="10" stroke="#0065F7" stroke-width="2.5"/><circle cx="13" cy="13" r="11.5" stroke="#0065F7" stroke-width="0.5" opacity="0.4"/></svg>
+    <span style="font-family:var(--font-secondary);font-weight:600;font-size:13px;color:var(--dex-navy);opacity:0.6">Dexfinity</span>
+    <span style="color:var(--dex-muted);font-size:11px;font-style:italic;opacity:0.6">Go Beyond</span>
+  </div>
+  <span>Prepared by <strong style="color:var(--dex-navy)">Dexfinity</strong> · Crystal Call — Google Ads Audit Q1 2026 · Dáta: Google Ads export · Apríl 2026</span>
+</footer>
+
+<script>
+const C = {
+  blue: '#0065F7', navy: '#05024E', teal: '#16AB8B', orange: '#ff7f00',
+  red: '#E74C3C', gray: '#D1D5DB', lightBlue: '#85C1E9', purple: '#8E44AD'
+};
+
+Chart.defaults.font.family = "'Questrial', Arial, sans-serif";
+Chart.defaults.font.size = 12;
+
+// Conv All Pie
+new Chart(document.getElementById('convAllPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['🚫 Kontaktná stránka (136)', '📞 Klik na tel. (80)', '📝 Formulár (32)', '📧 Klik na email (12)', '📲 Hovory z reklám (12)'],
+    datasets: [{ data: [136, 80, 32, 12, 12],
+      backgroundColor: [C.red, C.blue, C.teal, C.orange, C.purple],
+      borderWidth: 3, borderColor: '#fff' }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } } }
+});
+
+// Conv Real Pie
+new Chart(document.getElementById('convRealPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['📞 Klik na tel. (80)', '📝 Formulár (32)', '📧 Klik na email (12)', '📲 Hovory z reklám (12)'],
+    datasets: [{ data: [80, 32, 12, 12],
+      backgroundColor: [C.blue, C.teal, C.orange, C.purple],
+      borderWidth: 3, borderColor: '#fff' }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } } }
+});
+
+// Conv by Campaign Stacked
+new Chart(document.getElementById('convByCampaign'), {
+  type: 'bar',
+  data: {
+    labels: ['SK | Search', 'RO | Search', 'SK | Call Centrum', 'SK - Remarketing'],
+    datasets: [
+      { label: '📞 Klik na tel.', data: [19, 58, 3, 0], backgroundColor: C.blue, borderRadius: 2 },
+      { label: '📧 Klik na email', data: [1, 10, 1, 0], backgroundColor: C.orange, borderRadius: 2 },
+      { label: '📝 Formulár', data: [18, 10, 4, 0], backgroundColor: C.teal, borderRadius: 2 },
+      { label: '📲 Hovory z reklám', data: [7, 4, 1, 0], backgroundColor: C.purple, borderRadius: 2 },
+      { label: '🚫 Kontakt stránka', data: [87, 0, 44, 5], backgroundColor: C.red + '60', borderRadius: 2 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, title: { display: true, text: 'Počet konverzií' }, grid: { color: '#E5E7EB' } }
+    },
+    plugins: { legend: { position: 'top' } }
+  }
+});
+
+// Cost Pie
+new Chart(document.getElementById('costPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['SK | Search (€1,040)', 'RO | Search (€1,266)', 'SK | Call Centrum (€461)', 'SK - Remarketing (€104)'],
+    datasets: [{ data: [1040.36, 1266.46, 461.23, 103.85],
+      backgroundColor: [C.teal, C.blue, C.navy, C.orange],
+      borderWidth: 3, borderColor: '#fff' }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } } }
+});
+
+// Real Conv Pie
+new Chart(document.getElementById('realConvPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['RO | Search (82)', 'SK | Search (45)', 'SK | Call Centrum (9)', 'SK - Remarketing (0)'],
+    datasets: [{ data: [82, 45, 9, 0.3],
+      backgroundColor: [C.blue, C.teal, C.navy, C.gray],
+      borderWidth: 3, borderColor: '#fff' }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } } }
+});
+
+// Campaign Comparison Bar
+new Chart(document.getElementById('campaignBar'), {
+  type: 'bar',
+  data: {
+    labels: ['SK | Search', 'RO | Search', 'SK | Call Centrum', 'SK - Remarketing'],
+    datasets: [
+      { label: 'Reálne konverzie', data: [45, 82, 9, 0], backgroundColor: C.teal, borderRadius: 4, yAxisID: 'y' },
+      { label: 'Formuláre', data: [18, 10, 4, 0], backgroundColor: C.orange, borderRadius: 4, yAxisID: 'y' },
+      { label: 'Cost (€)', data: [1040.36, 1266.46, 461.23, 103.85], backgroundColor: C.blue, borderRadius: 4, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: { position: 'left', title: { display: true, text: 'Konverzie' }, grid: { color: '#E5E7EB' } },
+      y1: { position: 'right', title: { display: true, text: 'Cost (€)' }, grid: { display: false } }
+    },
+    plugins: { legend: { position: 'top' } }
+  }
+});
+
+// Smooth scroll
+document.querySelectorAll('.nav-links a:not(.disabled)').forEach(a => {
+  if (a.getAttribute('href').startsWith('#')) {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+});
+</script>
+</body>
+</html>
